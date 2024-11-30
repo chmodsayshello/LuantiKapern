@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <assert.h>
 #include "proxy.h"
 
 // Presenting the dirtiest arg handling known to mankind!
@@ -59,6 +60,7 @@ static void parse_args(int argc, char** argv, proxy_args* args) {
 }
 
 int main(int argc, char** argv) {
+    assert(argc >= 1);
     if (argc < 9) {
         print_help(argv[0]);
         return 1;
