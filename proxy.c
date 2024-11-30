@@ -81,7 +81,7 @@ void wait_and_auth(proxy* prox) {
             send(prox->server_fd, buff, bufflen, 0);
             if (detect_auth_ok(buff, bufflen) || manualdrop) {
                 puts("dropping the victim's connection!");
-                return
+                return;
             }
         }
     }
