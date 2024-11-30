@@ -27,7 +27,7 @@ bool detect_auth_ok(uint8_t* bytes, size_t length) {
     return bytes[12] == 0x52;
 }
 
-bool wait_and_auth(proxy* prox) {
+void wait_and_auth(proxy* prox) {
     signal(SIGINT, INThandler);
     uint8_t buff[BUFFER_SITZE];
     ssize_t bufflen;
@@ -81,12 +81,10 @@ bool wait_and_auth(proxy* prox) {
             send(prox->server_fd, buff, bufflen, 0);
             if (detect_auth_ok(buff, bufflen) || manualdrop) {
                 puts("dropping the victim's connection!");
-                return true;
+                return
             }
         }
     }
-
-    return true;
 }
 
 void proxy_init(proxy* prox, proxy_args* args) {

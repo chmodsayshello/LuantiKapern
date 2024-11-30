@@ -25,6 +25,6 @@ typedef struct proxy {
 } proxy;
 
 bool detect_auth_ok(uint8_t* bytes, size_t length);
-bool wait_and_auth(proxy* prox);
+void wait_and_auth(proxy* prox);
 void proxy_init(proxy* prox, proxy_args* args);
 void proxy_run_hijack(proxy* prox);
