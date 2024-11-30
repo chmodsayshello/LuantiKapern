@@ -12,7 +12,7 @@
 #define BUFFER_SITZE 0xFFFF
 bool manualdrop = false;
 
-void  INThandler(int sig) {
+void INThandler(int sig) {
     if (manualdrop) {
         exit(2);
     }
@@ -28,7 +28,8 @@ bool detect_auth_ok(uint8_t* bytes, size_t length) {
 }
 
 bool wait_and_auth(proxy* prox) {
-    signal(SIGINT, INThandler);    uint8_t buff[BUFFER_SITZE];
+    signal(SIGINT, INThandler);
+    uint8_t buff[BUFFER_SITZE];
     ssize_t bufflen;
 
     prox->listen_fd = socket(AF_INET, SOCK_DGRAM, 0);
