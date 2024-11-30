@@ -38,9 +38,6 @@ static void parse_args(int argc, char** argv, proxy_args* args) {
 
         case 'a':
             sum += ARGA;
-            size_t addr_len = strlen(optarg) + 1;
-            args->address = malloc(addr_len);
-            strncpy(args->address, optarg, addr_len);
             args->address = optarg;
         break;
 
